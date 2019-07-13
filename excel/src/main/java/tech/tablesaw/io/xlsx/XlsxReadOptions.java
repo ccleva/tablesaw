@@ -1,5 +1,6 @@
 package tech.tablesaw.io.xlsx;
 
+import tech.tablesaw.api.ColumnType;
 import tech.tablesaw.io.ReadOptions;
 import tech.tablesaw.io.Source;
 
@@ -9,6 +10,7 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.net.URL;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Locale;
 
 public class XlsxReadOptions extends ReadOptions {
@@ -144,5 +146,17 @@ public class XlsxReadOptions extends ReadOptions {
             super.minimizeColumnSizes();
             return this;
         }
+
+		@Override
+		public tech.tablesaw.io.ReadOptions.Builder columnTypesToDetect(List<ColumnType> columnTypesToDetect) {
+			super.columnTypesToDetect(columnTypesToDetect);
+			return this;
+		}
+
+		@Override
+		public tech.tablesaw.io.ReadOptions.Builder maxCharsPerColumn(int maxCharsPerColumn) {
+			super.maxCharsPerColumn(maxCharsPerColumn);
+			return this;
+		}
     }
 }
