@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -36,6 +37,8 @@ import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import tech.tablesaw.api.ColumnType;
 import tech.tablesaw.api.DoubleColumn;
 import tech.tablesaw.api.LongColumn;
@@ -48,7 +51,7 @@ import tech.tablesaw.io.Source;
 @Immutable
 public class XlsxReader implements DataReader<XlsxReadOptions> {
 
-    private static final XlsxReader INSTANCE = new XlsxReader();
+	private static final XlsxReader INSTANCE = new XlsxReader();
 
     static {
         register(Table.defaultReaderRegistry);
@@ -62,19 +65,28 @@ public class XlsxReader implements DataReader<XlsxReadOptions> {
 
     @Override
     public Table read(XlsxReadOptions options) throws IOException {
-        List<Table> tables = readMultiple(options);
-        if (tables.isEmpty()) {
-            throw new IllegalArgumentException("No tables found.");            
-        }
-        return tables.get(0);
+    	return read(options, 0).get(0);
+    }
+    
+    public List<Table> read(XlsxReadOptions options, String... sheetNames) throws IOException {
+    	return internalRead(options, new SheetNameFilter(sheetNames));
+    }
+
+    public List<Table> read(XlsxReadOptions options, int... sheetIndices) throws IOException {
+    	return internalRead(options, new SheetIndexFilter(sheetIndices));
     }
 
     public List<Table> readMultiple(XlsxReadOptions options) throws IOException {
+    	return internalRead(options, XlsxSheetFilter.NO_FILTER);
+    }
+    
+    protected List<Table> internalRead(XlsxReadOptions options, XlsxSheetFilter filter) throws IOException {
         byte[] bytes = null;
         InputStream input = getInputStream(options, bytes);
         List<Table> tables = new ArrayList<Table>();
         try (XSSFWorkbook workbook = new XSSFWorkbook(input)) {
             for (Sheet sheet : workbook) {
+            	if(!filter.accept(sheet)) continue;
                 TableRange tableArea = findTableArea(sheet);
                 if (tableArea != null) {
                     Table table = createTable(sheet, tableArea, options);
@@ -329,4 +341,37 @@ public class XlsxReader implements DataReader<XlsxReadOptions> {
     public Table read(Source source) throws IOException {
       return read(XlsxReadOptions.builder(source).build());
     }
+    
+    private interface XlsxSheetFilter {
+    	public static final XlsxSheetFilter NO_FILTER = new XlsxSheetFilter() {
+    		public boolean accept(final Sheet sheet) {
+    			return true;
+    		}
+    	};
+    	boolean accept(final Sheet sheet);
+    }
+
+    private class SheetNameFilter implements XlsxSheetFilter {
+    	private final List<String> acceptedNames;
+		public SheetNameFilter(final String[] sheetNames) {
+			this.acceptedNames = Arrays.asList(sheetNames);
+		}
+		@Override
+		public boolean accept(final Sheet sheet) {
+			return acceptedNames.contains(sheet.getSheetName());
+		}
+	}
+
+	private class SheetIndexFilter implements XlsxSheetFilter {
+    	private final IntList acceptedIndices;
+		public SheetIndexFilter(final int[] sheetIndices) {
+			this.acceptedIndices = new IntArrayList(sheetIndices);
+		}
+		@Override
+		public boolean accept(final Sheet sheet) {
+			return acceptedIndices.contains(sheet.getWorkbook().getSheetIndex(sheet));
+		}
+
+	}
+
 }
