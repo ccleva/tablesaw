@@ -221,7 +221,7 @@ public class XlsxReader implements DataReader<XlsxReadOptions> {
                 headerNames.add("col" + col);
             }
         }
-        Table table = Table.create(options.tableName());
+        Table table = Table.create(options.isSheetNameUsed() ? sheet.getSheetName() : options.tableName());
         List<Column<?>> columns = new ArrayList<>(Collections.nCopies(headerNames.size(), null));
         for (int rowNum = tableArea.startRow; rowNum <= tableArea.endRow; rowNum++) {
             row = sheet.getRow(rowNum);

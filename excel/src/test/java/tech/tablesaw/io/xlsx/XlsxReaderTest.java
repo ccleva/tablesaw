@@ -19,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
+import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -93,4 +94,18 @@ public class XlsxReaderTest {
         assertColumnValues(table.booleanColumn("booleancol"), true, null);
         assertColumnValues(table.dateTimeColumn("datecol"), LocalDateTime.of(2019, 2, 22, 20, 54, 9), null);
     }
+    
+    @Test
+    public void testUseSheetName() throws IOException {
+        Table tableDefaultFileName = new XlsxReader().read(
+        		XlsxReadOptions.builder(new File("../data/", "columns.xlsx")).build());
+        assertEquals("columns.xlsx", tableDefaultFileName.name(), "Default table name is not file name");
+        Table tableWithSheetName = new XlsxReader().read(
+        		XlsxReadOptions.builder(new File("../data/", "columns.xlsx")).useSheetName(true).build());
+        assertEquals("Sheet1", tableWithSheetName.name(), "Table name is not sheet name despite option set to true");
+        Table tableWithoutSheetName = new XlsxReader().read(
+        		XlsxReadOptions.builder(new File("../data/", "columns.xlsx")).useSheetName(false).build());
+        assertEquals("columns.xlsx", tableWithoutSheetName.name(), "Table name is not sheet name despite option set to false");
+    }
+
 }

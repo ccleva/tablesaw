@@ -15,8 +15,11 @@ import java.util.Locale;
 
 public class XlsxReadOptions extends ReadOptions {
 
-    protected XlsxReadOptions(Builder builder) {
+	private final boolean sheetNameUsed;
+	
+	protected XlsxReadOptions(Builder builder) {
         super(builder);
+        this.sheetNameUsed = builder.sheetNameUsed;
     }
 
     public static Builder builder(Source source) {
@@ -43,8 +46,14 @@ public class XlsxReadOptions extends ReadOptions {
         return new Builder(new URL(url));
     }
 
+    public boolean isSheetNameUsed() {
+		return sheetNameUsed;
+	}
+
     public static class Builder extends ReadOptions.Builder {
 
+    	protected boolean sheetNameUsed = false;
+    	
         protected Builder(Source source) {
             super(source);
         }
@@ -148,14 +157,25 @@ public class XlsxReadOptions extends ReadOptions {
         }
 
 		@Override
-		public tech.tablesaw.io.ReadOptions.Builder columnTypesToDetect(List<ColumnType> columnTypesToDetect) {
+		public Builder columnTypesToDetect(List<ColumnType> columnTypesToDetect) {
 			super.columnTypesToDetect(columnTypesToDetect);
 			return this;
 		}
 
 		@Override
-		public tech.tablesaw.io.ReadOptions.Builder maxCharsPerColumn(int maxCharsPerColumn) {
+		public Builder maxCharsPerColumn(int maxCharsPerColumn) {
 			super.maxCharsPerColumn(maxCharsPerColumn);
+			return this;
+		}
+		
+		/**
+		 * Sets the options to use sheet name for tables. Defaults value is false for compatibility.
+		 * Overrides the tableName option if set to true.
+		 * @param useSheetName whether we use sheet names for tables
+		 * @return the builder
+		 */
+		public Builder useSheetName(boolean useSheetName) {
+			this.sheetNameUsed = useSheetName;
 			return this;
 		}
     }
