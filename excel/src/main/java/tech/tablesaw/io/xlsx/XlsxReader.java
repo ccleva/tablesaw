@@ -51,7 +51,7 @@ import tech.tablesaw.io.Source;
 @Immutable
 public class XlsxReader implements DataReader<XlsxReadOptions> {
 
-	private static final XlsxReader INSTANCE = new XlsxReader();
+    private static final XlsxReader INSTANCE = new XlsxReader();
 
     static {
         register(Table.defaultReaderRegistry);
@@ -65,19 +65,19 @@ public class XlsxReader implements DataReader<XlsxReadOptions> {
 
     @Override
     public Table read(XlsxReadOptions options) throws IOException {
-    	return read(options, 0).get(0);
+        return read(options, 0).get(0);
     }
     
     public List<Table> read(XlsxReadOptions options, String... sheetNames) throws IOException {
-    	return internalRead(options, new SheetNameFilter(sheetNames));
+        return internalRead(options, new SheetNameFilter(sheetNames));
     }
 
     public List<Table> read(XlsxReadOptions options, int... sheetIndices) throws IOException {
-    	return internalRead(options, new SheetIndexFilter(sheetIndices));
+        return internalRead(options, new SheetIndexFilter(sheetIndices));
     }
 
     public List<Table> readMultiple(XlsxReadOptions options) throws IOException {
-    	return internalRead(options, XlsxSheetFilter.NO_FILTER);
+        return internalRead(options, XlsxSheetFilter.NO_FILTER);
     }
     
     protected List<Table> internalRead(XlsxReadOptions options, XlsxSheetFilter filter) throws IOException {
@@ -86,7 +86,7 @@ public class XlsxReader implements DataReader<XlsxReadOptions> {
         List<Table> tables = new ArrayList<Table>();
         try (XSSFWorkbook workbook = new XSSFWorkbook(input)) {
             for (Sheet sheet : workbook) {
-            	if(!filter.accept(sheet)) continue;
+                if(!filter.accept(sheet)) continue;
                 TableRange tableArea = findTableArea(sheet);
                 if (tableArea != null) {
                     Table table = createTable(sheet, tableArea, options);
@@ -343,35 +343,35 @@ public class XlsxReader implements DataReader<XlsxReadOptions> {
     }
     
     private interface XlsxSheetFilter {
-    	public static final XlsxSheetFilter NO_FILTER = new XlsxSheetFilter() {
-    		public boolean accept(final Sheet sheet) {
-    			return true;
-    		}
-    	};
-    	boolean accept(final Sheet sheet);
+        public static final XlsxSheetFilter NO_FILTER = new XlsxSheetFilter() {
+            public boolean accept(final Sheet sheet) {
+                return true;
+            }
+        };
+        boolean accept(final Sheet sheet);
     }
 
     private class SheetNameFilter implements XlsxSheetFilter {
-    	private final List<String> acceptedNames;
-		public SheetNameFilter(final String[] sheetNames) {
-			this.acceptedNames = Arrays.asList(sheetNames);
-		}
-		@Override
-		public boolean accept(final Sheet sheet) {
-			return acceptedNames.contains(sheet.getSheetName());
-		}
-	}
+        private final List<String> acceptedNames;
+        public SheetNameFilter(final String[] sheetNames) {
+            this.acceptedNames = Arrays.asList(sheetNames);
+        }
+        @Override
+        public boolean accept(final Sheet sheet) {
+            return acceptedNames.contains(sheet.getSheetName());
+        }
+    }
 
-	private class SheetIndexFilter implements XlsxSheetFilter {
-    	private final IntList acceptedIndices;
-		public SheetIndexFilter(final int[] sheetIndices) {
-			this.acceptedIndices = new IntArrayList(sheetIndices);
-		}
-		@Override
-		public boolean accept(final Sheet sheet) {
-			return acceptedIndices.contains(sheet.getWorkbook().getSheetIndex(sheet));
-		}
+    private class SheetIndexFilter implements XlsxSheetFilter {
+        private final IntList acceptedIndices;
+        public SheetIndexFilter(final int[] sheetIndices) {
+            this.acceptedIndices = new IntArrayList(sheetIndices);
+        }
+        @Override
+        public boolean accept(final Sheet sheet) {
+            return acceptedIndices.contains(sheet.getWorkbook().getSheetIndex(sheet));
+        }
 
-	}
+    }
 
 }

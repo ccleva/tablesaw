@@ -98,16 +98,16 @@ public class XlsxReaderTest {
     @Test
     public void testUseSheetName() throws IOException {
         Table tableDefaultFileName = new XlsxReader().read(
-        		XlsxReadOptions.builder(new File("../data/", "columns.xlsx")).build());
+                XlsxReadOptions.builder(new File("../data/", "columns.xlsx")).build());
         assertEquals("columns.xlsx", tableDefaultFileName.name(), "Default table name is not file name");
         Table tableWithSheetName = new XlsxReader().read(
-        		XlsxReadOptions.builder(new File("../data/", "columns.xlsx")).useSheetName(true).build());
+                XlsxReadOptions.builder(new File("../data/", "columns.xlsx")).useSheetName(true).build());
         assertEquals("Sheet1", tableWithSheetName.name(), "Table name is not sheet name despite option set to true");
         Table tableWithoutSheetName = new XlsxReader().read(
-        		XlsxReadOptions.builder(new File("../data/", "columns.xlsx")).useSheetName(false).build());
+                XlsxReadOptions.builder(new File("../data/", "columns.xlsx")).useSheetName(false).build());
         assertEquals("columns.xlsx", tableWithoutSheetName.name(), "Table name is not file name despite option set to false");
         Table tableSheetNameOverride = new XlsxReader().read(
-        		XlsxReadOptions.builder(new File("../data/", "columns.xlsx")).useSheetName(true).tableName("newname").build());
+                XlsxReadOptions.builder(new File("../data/", "columns.xlsx")).useSheetName(true).tableName("newname").build());
         assertEquals("Sheet1", tableSheetNameOverride.name(), "Option to use sheet name does not override setting table name");
     }
 

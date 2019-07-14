@@ -15,9 +15,9 @@ import java.util.Locale;
 
 public class XlsxReadOptions extends ReadOptions {
 
-	private final boolean sheetNameUsed;
-	
-	protected XlsxReadOptions(Builder builder) {
+    private final boolean sheetNameUsed;
+    
+    protected XlsxReadOptions(Builder builder) {
         super(builder);
         this.sheetNameUsed = builder.sheetNameUsed;
     }
@@ -47,13 +47,13 @@ public class XlsxReadOptions extends ReadOptions {
     }
 
     public boolean isSheetNameUsed() {
-		return sheetNameUsed;
-	}
+        return sheetNameUsed;
+    }
 
     public static class Builder extends ReadOptions.Builder {
 
-    	protected boolean sheetNameUsed = false;
-    	
+        protected boolean sheetNameUsed = false;
+        
         protected Builder(Source source) {
             super(source);
         }
@@ -156,27 +156,27 @@ public class XlsxReadOptions extends ReadOptions {
             return this;
         }
 
-		@Override
-		public Builder columnTypesToDetect(List<ColumnType> columnTypesToDetect) {
-			super.columnTypesToDetect(columnTypesToDetect);
-			return this;
-		}
+        @Override
+        public Builder columnTypesToDetect(List<ColumnType> columnTypesToDetect) {
+            super.columnTypesToDetect(columnTypesToDetect);
+            return this;
+        }
 
-		@Override
-		public Builder maxCharsPerColumn(int maxCharsPerColumn) {
-			super.maxCharsPerColumn(maxCharsPerColumn);
-			return this;
-		}
-		
-		/**
-		 * Sets the options to use sheet name for tables. Defaults value is false for compatibility.
-		 * Overrides the tableName option if set to true.
-		 * @param useSheetName whether we use sheet names for tables
-		 * @return the builder
-		 */
-		public Builder useSheetName(boolean useSheetName) {
-			this.sheetNameUsed = useSheetName;
-			return this;
-		}
+        @Override
+        public Builder maxCharsPerColumn(int maxCharsPerColumn) {
+            super.maxCharsPerColumn(maxCharsPerColumn);
+            return this;
+        }
+        
+        /**
+         * Sets the options to use sheet name for tables. Defaults value is false for compatibility.
+         * Overrides the tableName option if set to true.
+         * @param useSheetName whether we use sheet names for tables
+         * @return the builder
+         */
+        public Builder useSheetName(boolean useSheetName) {
+            this.sheetNameUsed = useSheetName;
+            return this;
+        }
     }
 }
