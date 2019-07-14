@@ -65,13 +65,35 @@ public class XlsxReader implements DataReader<XlsxReadOptions> {
 
     @Override
     public Table read(XlsxReadOptions options) throws IOException {
-        return read(options, 0).get(0);
+        List<Table> tables = read(options, 0);
+        if (tables.isEmpty()) {
+            throw new IllegalArgumentException("No tables found.");            
+        }
+        return tables.get(0);
     }
     
+    /**
+     * Read only the sheets identified by their names.
+     * No exception is thrown if some requested names do no correspond to a sheet name 
+     * but the returned list will be shorter than expected.
+     * @param options the XlsxReadOptions
+     * @param sheetNames names of sheets to read
+     * @return the list of Table from the file
+     * @throws IOException in case of problem with reading the file
+     */
     public List<Table> read(XlsxReadOptions options, String... sheetNames) throws IOException {
         return internalRead(options, new SheetNameFilter(sheetNames));
     }
 
+    /**
+     * Read only the sheets identified by their indices (0 based).
+     * No exception is thrown if some requested indices do no correspond to a sheet 
+     * but the returned list will be shorter than expected.
+     * @param options the XlsxReadOptions
+     * @param sheetIndices indices of sheets to read (0 based)
+     * @return the list of Table from the file
+     * @throws IOException in case of problem with reading the file
+     */
     public List<Table> read(XlsxReadOptions options, int... sheetIndices) throws IOException {
         return internalRead(options, new SheetIndexFilter(sheetIndices));
     }
@@ -342,17 +364,35 @@ public class XlsxReader implements DataReader<XlsxReadOptions> {
       return read(XlsxReadOptions.builder(source).build());
     }
     
-    private interface XlsxSheetFilter {
+    /**
+     * Interface for filtering sheets
+     */
+    protected interface XlsxSheetFilter {
+        /**
+         * Filter that accepts all sheets
+         */
         public static final XlsxSheetFilter NO_FILTER = new XlsxSheetFilter() {
-            public boolean accept(final Sheet sheet) {
+            public final boolean accept(final Sheet sheet) {
                 return true;
             }
         };
+        /**
+         * Returns whether the filter accepts the given sheet.
+         * @param sheet the sheet to check
+         * @return whether it is accepted by the filter
+         */
         boolean accept(final Sheet sheet);
     }
 
-    private class SheetNameFilter implements XlsxSheetFilter {
+    /**
+     * XlsxSheetFilter based on sheet names
+     */
+    protected class SheetNameFilter implements XlsxSheetFilter {
         private final List<String> acceptedNames;
+        /**
+         * Create a XlsxSheetFilter that accepts the given sheet names
+         * @param sheetNames the names of sheets to accept
+         */
         public SheetNameFilter(final String[] sheetNames) {
             this.acceptedNames = Arrays.asList(sheetNames);
         }
@@ -362,8 +402,15 @@ public class XlsxReader implements DataReader<XlsxReadOptions> {
         }
     }
 
-    private class SheetIndexFilter implements XlsxSheetFilter {
+    /**
+     * XlsxSheetFilter based on sheet indices 
+     */
+    protected class SheetIndexFilter implements XlsxSheetFilter {
         private final IntList acceptedIndices;
+        /**
+         * Create a XlsxSheetFilter that accepts the sheets at the given indices (0 based)
+         * @param sheetIndices sheet indices to accept (0 based)
+         */
         public SheetIndexFilter(final int[] sheetIndices) {
             this.acceptedIndices = new IntArrayList(sheetIndices);
         }
@@ -371,7 +418,6 @@ public class XlsxReader implements DataReader<XlsxReadOptions> {
         public boolean accept(final Sheet sheet) {
             return acceptedIndices.contains(sheet.getWorkbook().getSheetIndex(sheet));
         }
-
     }
 
 }
