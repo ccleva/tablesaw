@@ -73,12 +73,12 @@ public class XlsxReader implements DataReader<XlsxReadOptions> {
     }
     
     /**
-     * Read only the sheets identified by their names.
+     * Read only the sheets identified by their names. Table order is the same as sheet order in the file.
      * No exception is thrown if some requested names do no correspond to a sheet name 
      * but the returned list will be shorter than expected.
      * @param options the XlsxReadOptions
      * @param sheetNames names of sheets to read
-     * @return the list of Table from the file
+     * @return the filtered list of Table from the file
      * @throws IOException in case of problem with reading the file
      */
     public List<Table> read(XlsxReadOptions options, String... sheetNames) throws IOException {
@@ -86,18 +86,24 @@ public class XlsxReader implements DataReader<XlsxReadOptions> {
     }
 
     /**
-     * Read only the sheets identified by their indices (0 based).
+     * Read only the sheets identified by their indices (0 based). Table order is the same as sheet order in the file.
      * No exception is thrown if some requested indices do no correspond to a sheet 
      * but the returned list will be shorter than expected.
      * @param options the XlsxReadOptions
      * @param sheetIndices indices of sheets to read (0 based)
-     * @return the list of Table from the file
+     * @return the filtered list of Table from the file
      * @throws IOException in case of problem with reading the file
      */
     public List<Table> read(XlsxReadOptions options, int... sheetIndices) throws IOException {
         return internalRead(options, new SheetIndexFilter(sheetIndices));
     }
 
+    /**
+     * Read all sheets from the excel file
+     * @param options the XlsxReadOptions
+     * @return the list of Table from the file
+     * @throws IOException in case of problem with reading the file
+     */
     public List<Table> readMultiple(XlsxReadOptions options) throws IOException {
         return internalRead(options, XlsxSheetFilter.NO_FILTER);
     }

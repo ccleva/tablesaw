@@ -110,5 +110,31 @@ public class XlsxReaderTest {
                 XlsxReadOptions.builder(new File("../data/", "columns.xlsx")).useSheetName(true).tableName("newname").build());
         assertEquals("Sheet1", tableSheetNameOverride.name(), "Option to use sheet name does not override setting table name");
     }
+    
+    @Test
+    public void testSheetFilteringByName() throws IOException {
+        List<Table> readOnlyOne = new XlsxReader().read(
+                XlsxReadOptions.builder(new File("../data/", "columns.xlsx")).build(), "Sheet1");
+        assertEquals(1, readOnlyOne.size(), "Error while filtering by correct name");
+        List<Table> readSeveral = new XlsxReader().read(
+                XlsxReadOptions.builder(new File("../data/", "columns.xlsx")).build(), "Sheet1", "Sheet12");
+        assertEquals(1, readSeveral.size(), "Error while filtering by more names");
+        List<Table> readWrong = new XlsxReader().read(
+                XlsxReadOptions.builder(new File("../data/", "columns.xlsx")).build(), "Sheet12");
+        assertEquals(0, readWrong.size(), "Error while filtering by incorrect name");
+    }
+
+    @Test
+    public void testSheetFilteringByIndices() throws IOException {
+        List<Table> readOnlyOne = new XlsxReader().read(
+                XlsxReadOptions.builder(new File("../data/", "columns.xlsx")).build(), 0);
+        assertEquals(1, readOnlyOne.size(), "Error while filtering by correct indices");
+        List<Table> readSeveral = new XlsxReader().read(
+                XlsxReadOptions.builder(new File("../data/", "columns.xlsx")).build(), 0, 256);
+        assertEquals(1, readSeveral.size(), "Error while filtering by more indices");
+        List<Table> readWrong = new XlsxReader().read(
+                XlsxReadOptions.builder(new File("../data/", "columns.xlsx")).build(), 256);
+        assertEquals(0, readWrong.size(), "Error while filtering by incorrectindices");
+    }
 
 }
