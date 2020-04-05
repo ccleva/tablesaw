@@ -129,6 +129,32 @@ public class XlsxReaderTest {
   }
 
   @Test
+  public void testColumnsWithEmptyStringValues() {
+    Table table =
+        read1(
+            "columns-with-empty-strings-values",
+            2,
+            "stringcol",
+            "shortcol",
+            "intcol",
+            "longcol",
+            "doublecol",
+            "booleancol",
+            "datecol");
+    //        stringcol    shortcol    intcol        longcol        doublecol    booleancol    datecol
+    //        null            *        NA            12345678900    NA            TRUE        22/02/2019 20:54:09
+    //        Hallvard        124      12345679      NaN            13,35         *           null
+    assertColumnValues(table.stringColumn("stringcol"), null, "Hallvard");
+    assertColumnValues(table.intColumn("shortcol"), null, 124);
+    assertColumnValues(table.intColumn("intcol"), null, 12345679);
+    assertColumnValues(table.longColumn("longcol"), 12345678900L, null);
+    assertColumnValues(table.doubleColumn("doublecol"), null, 13.35);
+    assertColumnValues(table.booleanColumn("booleancol"), true, null);
+    assertColumnValues(
+        table.dateTimeColumn("datecol"), LocalDateTime.of(2019, 2, 22, 20, 54, 9), null);
+  }
+
+  @Test
   public void testSheetIndex() throws IOException {
     Table table =
         new XlsxReader()
