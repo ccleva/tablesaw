@@ -462,6 +462,23 @@ public class CsvReaderTest {
   }
 
   @Test
+  public void testWithEmptyStringValue() throws IOException {
+
+    CsvReadOptions options =
+        CsvReadOptions.builder("../data/empty_strings_values.csv")
+            .header(true)
+            .build();
+
+    Table t = Table.read().csv(options);
+    assertEquals(1, t.stringColumn(0).countMissing());
+    assertEquals(1, t.numberColumn(1).countMissing());
+    assertEquals(1, t.numberColumn(2).countMissing());
+    assertEquals(1, t.numberColumn(3).countMissing());
+    assertEquals(1, t.numberColumn(4).countMissing());
+    assertEquals(1, t.numberColumn(5).countMissing());
+  }
+
+  @Test
   public void testWindowsAndLinuxLineEndings() throws IOException {
     Reader reader =
         new StringReader(

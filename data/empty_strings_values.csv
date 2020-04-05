@@ -1,0 +1,3 @@
+stringcol,shortcol,intcol,longcol,doublecol,booleancol
+null,*,NA,12345678900,NaN,1
+Hallvard,124,12345679,null,13.35,NA
