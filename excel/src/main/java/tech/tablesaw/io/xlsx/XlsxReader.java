@@ -262,8 +262,12 @@ public class XlsxReader implements DataReader<XlsxReadOptions> {
             row.getCell(colNum + tableArea.startColumn, MissingCellPolicy.RETURN_BLANK_AS_NULL);
         Column<?> column = columns.get(colNum);
         if (cell != null) {
+          boolean columnCreated = false;
           if (column == null) {
+            // if cell is not null but has one of MISSING_INDICATORS values
+            // the created column will be a StringColumn with empty value
             column = createColumn(headerNames.get(colNum), cell);
+            columnCreated = true;
             columns.set(colNum, column);
             while (column.size() < rowNum - tableArea.startRow) {
               column.appendMissing();
@@ -273,6 +277,15 @@ public class XlsxReader implements DataReader<XlsxReadOptions> {
           if (altColumn != null && altColumn != column) {
             column = altColumn;
             columns.set(colNum, column);
+          }
+          // to avoid empty string values blocking future data type identification
+          // we remove here the newly created column if its last values
+          // has not been inserted yet (i.e. will be filled with missing value)
+          // or if a missing value has been inserted
+          if(columnCreated && (column.size() != (rowNum - tableArea.startRow + 1)
+                  || column.isMissing(rowNum - tableArea.startRow))) {
+              columns.set(colNum, null);
+              column = null;
           }
         }
         if (column != null) {
