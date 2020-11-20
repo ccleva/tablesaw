@@ -461,11 +461,7 @@ public class Row implements Iterator<Row> {
   public ColumnType getColumnType(String columnName) {
     return columnMap.get(columnName).type();
   }
-  
-  public boolean hasColumn(String columnName) {
-	  return columnMap.columnMap.containsKey(columnName.toLowerCase());
-  }
-  
+
   @Override
   public String toString() {
     Table t = tableSlice.getTable().emptyCopy();
