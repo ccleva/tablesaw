@@ -13,8 +13,8 @@ __Tablesaw__ is Java for data science. It includes a dataframe and a visualizati
 ### Tablesaw features
 
 #### Data processing & transformation
-* Import data from RDBMS, Excel, CSV, JSON, HTML, or Fixed Width text files, whether they are local or remote (http, S3, etc.)
-* Export data to CSV, JSON, HTML or Fixed Width files.
+* Import data from RDBMS, Excel, CSV, JSON, HTML, parquet, or Fixed Width text files, whether they are local or remote (http, S3, etc.)
+* Export data to CSV, JSON, HTML, parquet or Fixed Width files.
 * Combine tables by appending or joining
 * Add and remove columns or rows
 * Sort, Group, Query
@@ -53,6 +53,7 @@ You may also add supporting projects:
 - `tablesaw-excel` - for using Excel workbooks
 - `tablesaw-html` - for using HTML
 - `tablesaw-json` - for using JSON
+- `tablesaw-parquet` - for using parquet
 - `tablesaw-jsplot` - for creating charts
 
 ### Documentation and support
